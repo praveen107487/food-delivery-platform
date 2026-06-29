@@ -10,6 +10,7 @@ from app.infrastructure.database.mixins import TimestampMixin
 
 if TYPE_CHECKING:
     from app.customer.models.saved_address import SavedAddress
+    from app.cart.models.cart import Cart
 
 
 class Customer(TimestampMixin, Base):
@@ -51,5 +52,10 @@ class Customer(TimestampMixin, Base):
     saved_addresses: Mapped[list["SavedAddress"]] = relationship(
         back_populates="customer",
         cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+
+    carts: Mapped[list["Cart"]] = relationship(
+        back_populates="customer",
         lazy="selectin",
     )

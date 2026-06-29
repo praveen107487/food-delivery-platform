@@ -12,7 +12,8 @@ from app.infrastructure.database.mixins import TimestampMixin
 
 if TYPE_CHECKING:
     from app.restaurant.models.menu_item import MenuItem
-
+    from app.cart.models.cart import Cart
+    
 
 class Restaurant(TimestampMixin, Base):
     __tablename__ = "restaurants"
@@ -92,5 +93,10 @@ class Restaurant(TimestampMixin, Base):
     menu_items: Mapped[list["MenuItem"]] = relationship(
         back_populates="restaurant",
         cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+    
+    carts: Mapped[list["Cart"]] = relationship(
+        back_populates="restaurant",
         lazy="selectin",
     )
