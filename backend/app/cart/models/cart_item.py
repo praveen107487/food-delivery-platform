@@ -1,7 +1,14 @@
 import uuid
+from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import CheckConstraint, ForeignKey, Integer
+from sqlalchemy import (
+    CheckConstraint,
+    ForeignKey,
+    Integer,
+    Numeric,
+    UniqueConstraint,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -36,6 +43,12 @@ class CartItem(TimestampMixin, Base):
     quantity: Mapped[int] = mapped_column(
         Integer,
         nullable=False,
+        default=1,
+    )
+
+    unit_price: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2),
+        nullable=False,
     )
 
     __table_args__ = (
@@ -43,12 +56,14 @@ class CartItem(TimestampMixin, Base):
             "quantity > 0",
             name="ck_cart_items_quantity_positive",
         ),
-    )
-
-    __table_args__ = (
         CheckConstraint(
-            "quantity > 0",
-            name="ck_cart_items_quantity_positive",
+            "unit_price >= 0",
+            name="ck_cart_items_unit_price_non_negative",
+        ),
+        UniqueConstraint(
+            "cart_id",
+            "menu_item_id",
+            name="uq_cart_items_cart_menu_item",
         ),
     )
 

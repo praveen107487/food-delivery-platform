@@ -23,9 +23,15 @@ class Cart(TimestampMixin, Base):
         default=uuid.uuid4,
     )
 
-    customer_id: Mapped[str] = mapped_column(
+    customer_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
         ForeignKey("customers.customer_id"),
+        nullable=False,
+    )
+
+    restaurant_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("restaurants.restaurant_id"),
         nullable=False,
     )
 
@@ -34,7 +40,7 @@ class Cart(TimestampMixin, Base):
         nullable=False,
         default=CartStatus.ACTIVE,
     )
-    
+
     customer: Mapped["Customer"] = relationship(
         back_populates="carts",
         lazy="selectin",
