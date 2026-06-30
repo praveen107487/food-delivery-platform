@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from app.order.models.order_status_history import (
         OrderStatusHistory,
     )
+    from app.payment.models.payment import Payment
 
 
 class Order(TimestampMixin, Base):
@@ -144,6 +145,12 @@ class Order(TimestampMixin, Base):
     )
 
     status_history: Mapped[list["OrderStatusHistory"]] = relationship(
+        back_populates="order",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+    
+    payments: Mapped[list["Payment"]] = relationship(
         back_populates="order",
         cascade="all, delete-orphan",
         lazy="selectin",
