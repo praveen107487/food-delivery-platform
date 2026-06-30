@@ -11,6 +11,7 @@ from app.infrastructure.database.mixins import TimestampMixin
 if TYPE_CHECKING:
     from app.customer.models.saved_address import SavedAddress
     from app.cart.models.cart import Cart
+    from app.order.models.order import Order
 
 
 class Customer(TimestampMixin, Base):
@@ -56,6 +57,11 @@ class Customer(TimestampMixin, Base):
     )
 
     carts: Mapped[list["Cart"]] = relationship(
+        back_populates="customer",
+        lazy="selectin",
+    )
+    
+    orders: Mapped[list["Order"]] = relationship(
         back_populates="customer",
         lazy="selectin",
     )
