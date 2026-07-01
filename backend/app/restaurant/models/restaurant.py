@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from app.restaurant.models.menu_item import MenuItem
     from app.cart.models.cart import Cart
     from app.order.models.order import Order
+    from app.coupon.models.restaurant_coupon import RestaurantCoupon
 
 class Restaurant(TimestampMixin, Base):
     __tablename__ = "restaurants"
@@ -103,5 +104,11 @@ class Restaurant(TimestampMixin, Base):
     
     orders: Mapped[list["Order"]] = relationship(
         back_populates="restaurant",
+        lazy="selectin",
+    )
+    
+    restaurant_coupons: Mapped[list["RestaurantCoupon"]] = relationship(
+        back_populates="restaurant",
+        cascade="all, delete-orphan",
         lazy="selectin",
     )
