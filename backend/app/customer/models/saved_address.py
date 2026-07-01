@@ -1,0 +1,80 @@
+import uuid
+from typing import TYPE_CHECKING
+
+from sqlalchemy import Boolean, ForeignKey, String, Text
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+
+from app.infrastructure.database.base import Base
+from app.infrastructure.database.mixins import TimestampMixin
+
+if TYPE_CHECKING:
+    from app.customer.models.customer import Customer
+
+
+class SavedAddress(TimestampMixin, Base):
+    __tablename__ = "saved_addresses"
+
+    address_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        primary_key=True,
+        default=uuid.uuid4,
+    )
+
+    customer_id: Mapped[uuid.UUID] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("customers.customer_id"),
+        nullable=False,
+    )
+
+    label: Mapped[str] = mapped_column(
+        String(50),
+        nullable=False,
+    )
+
+    recipient_name: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False,
+    )
+
+    phone_number: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+    )
+
+    street: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+
+    city: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False,
+    )
+
+    state: Mapped[str] = mapped_column(
+        String(100),
+        nullable=False,
+    )
+
+    postal_code: Mapped[str] = mapped_column(
+        String(20),
+        nullable=False,
+    )
+
+    delivery_instructions: Mapped[str | None] = mapped_column(
+        Text,
+        nullable=True,
+        default=None,
+    )
+
+    is_default: Mapped[bool] = mapped_column(
+        Boolean,
+        nullable=False,
+        default=False,
+    )
+
+    customer: Mapped["Customer"] = relationship(
+        back_populates="saved_addresses",
+        lazy="selectin",
+    )
