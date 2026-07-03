@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from app.order.models.order import Order
     from app.review.models.restaurant_review import RestaurantReview
     from app.review.models.food_item_review import FoodItemReview
+    from app.notification.models.notification import Notification
 
 
 class Customer(TimestampMixin, Base):
@@ -75,5 +76,11 @@ class Customer(TimestampMixin, Base):
 
     food_item_reviews: Mapped[list["FoodItemReview"]] = relationship(
         back_populates="customer",
+        lazy="selectin",
+    )
+
+    notifications: Mapped[list["Notification"]] = relationship(
+        back_populates="customer",
+        cascade="all, delete-orphan",
         lazy="selectin",
     )
