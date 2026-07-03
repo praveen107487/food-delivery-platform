@@ -12,6 +12,9 @@ if TYPE_CHECKING:
     from app.customer.models.saved_address import SavedAddress
     from app.cart.models.cart import Cart
     from app.order.models.order import Order
+    from app.review.models.restaurant_review import RestaurantReview
+    from app.review.models.food_item_review import FoodItemReview
+    from app.notification.models.notification import Notification
 
 
 class Customer(TimestampMixin, Base):
@@ -60,8 +63,24 @@ class Customer(TimestampMixin, Base):
         back_populates="customer",
         lazy="selectin",
     )
-    
+
     orders: Mapped[list["Order"]] = relationship(
         back_populates="customer",
+        lazy="selectin",
+    )
+
+    restaurant_review: Mapped[RestaurantReview] = relationship(
+        back_populates="customer",
+        lazy="selectin",
+    )
+
+    food_item_reviews: Mapped[list["FoodItemReview"]] = relationship(
+        back_populates="customer",
+        lazy="selectin",
+    )
+
+    notifications: Mapped[list["Notification"]] = relationship(
+        back_populates="customer",
+        cascade="all, delete-orphan",
         lazy="selectin",
     )

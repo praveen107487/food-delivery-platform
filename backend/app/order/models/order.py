@@ -24,6 +24,7 @@ if TYPE_CHECKING:
         OrderStatusHistory,
     )
     from app.payment.models.payment import Payment
+    from app.review.models.restaurant_review import RestaurantReview
 
 
 class Order(TimestampMixin, Base):
@@ -149,9 +150,15 @@ class Order(TimestampMixin, Base):
         cascade="all, delete-orphan",
         lazy="selectin",
     )
-    
+
     payments: Mapped[list["Payment"]] = relationship(
         back_populates="order",
         cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+
+    restaurant_review: Mapped["RestaurantReview | None"] = relationship(
+        back_populates="order",
+        uselist=False,
         lazy="selectin",
     )
