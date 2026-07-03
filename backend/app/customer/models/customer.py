@@ -9,12 +9,12 @@ from app.infrastructure.database.base import Base
 from app.infrastructure.database.mixins import TimestampMixin
 
 if TYPE_CHECKING:
-    from app.customer.models.saved_address import SavedAddress
     from app.cart.models.cart import Cart
-    from app.order.models.order import Order
-    from app.review.models.restaurant_review import RestaurantReview
-    from app.review.models.food_item_review import FoodItemReview
+    from app.customer.models.saved_address import SavedAddress
     from app.notification.models.notification import Notification
+    from app.order.models.order import Order
+    from app.review.models.food_item_review import FoodItemReview
+    from app.review.models.restaurant_review import RestaurantReview
 
 
 class Customer(TimestampMixin, Base):
