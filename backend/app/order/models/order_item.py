@@ -17,6 +17,7 @@ from app.infrastructure.database import Base, TimestampMixin
 if TYPE_CHECKING:
     from app.order.models.order import Order
     from app.restaurant.models.menu_item import MenuItem
+    from app.review.models.food_item_review import FoodItemReview
 
 
 class OrderItem(TimestampMixin, Base):
@@ -84,5 +85,11 @@ class OrderItem(TimestampMixin, Base):
 
     menu_item: Mapped["MenuItem"] = relationship(
         back_populates="order_items",
+        lazy="selectin",
+    )
+
+    food_item_review: Mapped["FoodItemReview | None"] = relationship(
+        back_populates="order_item",
+        uselist=False,
         lazy="selectin",
     )
