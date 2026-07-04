@@ -11,17 +11,25 @@ repos:
     rev: v0.15.20
     hooks:
       - id: ruff
-        args: [--fix]
+        args:
+          - --fix
+          - --config=backend/pyproject.toml
 
       - id: ruff-format
+        args:
+          - --config=backend/pyproject.toml
 
   - repo: local
     hooks:
       - id: mypy
         name: mypy
-        entry: uv run mypy
+        entry: uv
         language: system
         pass_filenames: false
         args:
+          - run
+          - --project
+          - backend
+          - mypy
           - --config-file=backend/pyproject.toml
           - backend/app
