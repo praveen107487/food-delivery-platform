@@ -1,22 +1,25 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr
+
+from app.auth.constants import AUTHORIZATION_SCHEME
+from app.shared.types import NameStr, PasswordStr, PhoneNumberStr
 
 
 class CustomerRegistrationRequest(BaseModel):
     email: EmailStr
-    password: str = Field(min_length=8, max_length=128)
-    first_name: str = Field(min_length=1, max_length=100)
-    last_name: str = Field(min_length=1, max_length=100)
-    phone_number: str = Field(min_length=10, max_length=20)
+    password: PasswordStr
+    first_name: NameStr
+    last_name: NameStr
+    phone_number: PhoneNumberStr
 
 
 class CustomerLoginRequest(BaseModel):
     email: EmailStr
-    password: str = Field(min_length=8, max_length=128)
+    password: PasswordStr
 
 
 class TokenResponse(BaseModel):
     access_token: str
-    token_type: str
+    token_type: str = AUTHORIZATION_SCHEME
 
 
 class AuthenticatedCustomerResponse(BaseModel):
