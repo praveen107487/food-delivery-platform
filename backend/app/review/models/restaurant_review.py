@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import uuid
 from typing import TYPE_CHECKING
 
+from app.infrastructure.database import Base, TimestampMixin
 from sqlalchemy import (
     CheckConstraint,
     ForeignKey,
@@ -10,8 +13,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.infrastructure.database import Base, TimestampMixin
 
 if TYPE_CHECKING:
     from app.customer.models.customer import Customer
@@ -75,17 +76,17 @@ class RestaurantReview(TimestampMixin, Base):
         ),
     )
 
-    customer: Mapped["Customer"] = relationship(
+    customer: Mapped[Customer] = relationship(
         back_populates="restaurant_reviews",
         lazy="selectin",
     )
 
-    order: Mapped["Order"] = relationship(
+    order: Mapped[Order] = relationship(
         back_populates="restaurant_review",
         lazy="selectin",
     )
 
-    images: Mapped[list["RestaurantReviewImage"]] = relationship(
+    images: Mapped[list[RestaurantReviewImage]] = relationship(
         back_populates="review",
         cascade="all, delete-orphan",
         lazy="selectin",

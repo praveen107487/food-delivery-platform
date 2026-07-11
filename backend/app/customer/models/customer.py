@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import uuid
 from typing import TYPE_CHECKING
 
@@ -69,7 +71,7 @@ class Customer(TimestampMixin, Base):
         lazy="selectin",
     )
 
-    restaurant_review: Mapped[RestaurantReview] = relationship(
+    restaurant_reviews: Mapped[list[RestaurantReview]] = relationship(
         back_populates="customer",
         lazy="selectin",
     )
