@@ -1,11 +1,12 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, HTTPException, status
 
 from app.auth.dependencies import (
     get_authentication_service,
     get_current_customer,
 )
+from app.auth.exceptions import EmailAlreadyExistsError, InvalidCredentialsError
 from app.auth.schemas import (
     AuthenticatedCustomerResponse,
     CustomerLoginRequest,
@@ -33,7 +34,13 @@ async def register(
         Depends(get_authentication_service),
     ],
 ) -> AuthenticatedCustomerResponse:
-    return await service.register(request)
+    try:
+        return await service.register(request)
+    except EmailAlreadyExistsError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Email already exists.",
+        ) from exc
 
 
 @router.post(
@@ -48,7 +55,13 @@ async def login(
         Depends(get_authentication_service),
     ],
 ) -> TokenResponse:
-    return await service.login(request)
+    try:
+        return await service.login(request)
+    except InvalidCredentialsError as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid email or password.",
+        ) from exc
 
 
 @router.get(

@@ -1,3 +1,5 @@
+import uuid
+
 from pydantic import BaseModel, ConfigDict, EmailStr
 
 from app.auth.constants import AUTHORIZATION_SCHEME
@@ -23,7 +25,7 @@ class TokenResponse(BaseModel):
 
 
 class AuthenticatedCustomerResponse(BaseModel):
-    customer_id: str
+    customer_id: uuid.UUID
     email: EmailStr
     first_name: str
     last_name: str

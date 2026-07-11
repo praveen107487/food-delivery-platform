@@ -1,9 +1,10 @@
 from typing import Annotated
 
-from fastapi import Depends
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.exceptions import ExpiredTokenError, InvalidTokenError
 from app.auth.repository import AuthenticationRepository
 from app.auth.service import AuthenticationService
 from app.customer.models.customer import Customer
@@ -41,4 +42,11 @@ async def get_current_customer(
         Depends(get_authentication_service),
     ],
 ) -> Customer:
-    return await service.get_current_customer(token)
+    try:
+        return await service.get_current_customer(token)
+    except (ExpiredTokenError, InvalidTokenError) as exc:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or expired token.",
+            headers={"WWW-Authenticate": "Bearer"},
+        ) from exc
