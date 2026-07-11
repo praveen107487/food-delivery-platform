@@ -12,3 +12,7 @@ class InvalidTokenError(AuthenticationError):
 
 class ExpiredTokenError(AuthenticationError):
     """Raised when a JWT has expired."""
+
+
+class EmailAlreadyExistsError(AuthenticationError):
+    """Raised when a customer registers with an existing email."""
