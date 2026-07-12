@@ -1,46 +1,34 @@
-from datetime import time
-from decimal import Decimal
-from uuid import UUID
+import uuid
 
 from pydantic import BaseModel, ConfigDict, EmailStr
 
-
-class RestaurantSummaryResponse(BaseModel):
-    restaurant_id: UUID
-    restaurant_name: str
-    description: str | None
-    cuisine_type: str
-    average_rating: Decimal | None
-
-    model_config = ConfigDict(from_attributes=True)
+from app.auth.constants import AUTHORIZATION_SCHEME
+from app.shared.types import NameStr, PasswordStr, PhoneNumberStr
 
 
-class RestaurantDetailResponse(RestaurantSummaryResponse):
+class CustomerRegistrationRequest(BaseModel):
+    email: EmailStr
+    password: PasswordStr
+    first_name: NameStr
+    last_name: NameStr
+    phone_number: PhoneNumberStr
+
+
+class CustomerLoginRequest(BaseModel):
+    email: EmailStr
+    password: PasswordStr
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = AUTHORIZATION_SCHEME
+
+
+class AuthenticatedCustomerResponse(BaseModel):
+    customer_id: uuid.UUID
+    email: EmailStr
+    first_name: str
+    last_name: str
     phone_number: str
-    email: EmailStr | None
-    street: str
-    city: str
-    state: str
-    postal_code: str
-    opening_time: time
-    closing_time: time
-
-
-class MenuItemResponse(BaseModel):
-    menu_item_id: UUID
-    name: str
-    description: str | None
-    category: str
-    image_url: str | None
-    price: Decimal
-    preparation_time: int
 
     model_config = ConfigDict(from_attributes=True)
-
-
-class RestaurantListResponse(BaseModel):
-    restaurants: list[RestaurantSummaryResponse]
-
-
-class MenuItemListResponse(BaseModel):
-    menu_items: list[MenuItemResponse]
