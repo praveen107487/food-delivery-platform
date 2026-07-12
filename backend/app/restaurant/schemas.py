@@ -2,7 +2,7 @@ from datetime import time
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, ConfigDict, EmailStr
 
 
 class RestaurantSummaryResponse(BaseModel):
@@ -11,6 +11,8 @@ class RestaurantSummaryResponse(BaseModel):
     description: str | None
     cuisine_type: str
     average_rating: Decimal | None
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RestaurantDetailResponse(RestaurantSummaryResponse):
@@ -32,6 +34,8 @@ class MenuItemResponse(BaseModel):
     image_url: str | None
     price: Decimal
     preparation_time: int
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class RestaurantListResponse(BaseModel):
