@@ -3,6 +3,8 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
+from app.infrastructure.database import Base, TimestampMixin
+from app.shared.enums import CouponStatus, DiscountType
 from sqlalchemy import (
     CheckConstraint,
     DateTime,
@@ -13,9 +15,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.infrastructure.database import Base, TimestampMixin
-from app.shared.enums import CouponStatus, DiscountType
 
 if TYPE_CHECKING:
     from app.restaurant.models.restaurant import Restaurant

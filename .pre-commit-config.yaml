@@ -28,8 +28,7 @@ repos:
         pass_filenames: false
         args:
           - run
-          - --project
+          - --directory
           - backend
           - mypy
-          - --config-file=backend/pyproject.toml
-          - backend/app
+          - app

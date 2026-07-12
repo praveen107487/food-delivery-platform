@@ -3,12 +3,11 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
+from app.infrastructure.database import Base, TimestampMixin
+from app.shared.enums import PaymentStatus
 from sqlalchemy import CheckConstraint, DateTime, Enum, ForeignKey, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.infrastructure.database import Base, TimestampMixin
-from app.shared.enums import PaymentStatus
 
 if TYPE_CHECKING:
     from app.order.models.order import Order

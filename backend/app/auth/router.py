@@ -35,7 +35,10 @@ async def register(
     ],
 ) -> AuthenticatedCustomerResponse:
     try:
-        return await service.register(request)
+        customer = await service.register(request)
+
+        return AuthenticatedCustomerResponse.model_validate(customer)
+
     except EmailAlreadyExistsError as exc:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

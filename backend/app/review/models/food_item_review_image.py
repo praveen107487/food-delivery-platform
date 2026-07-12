@@ -2,11 +2,10 @@ import uuid
 from datetime import datetime
 from typing import TYPE_CHECKING
 
+from app.infrastructure.database import Base
 from sqlalchemy import DateTime, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-from app.infrastructure.database import Base
 
 if TYPE_CHECKING:
     from app.review.models.food_item_review import FoodItemReview

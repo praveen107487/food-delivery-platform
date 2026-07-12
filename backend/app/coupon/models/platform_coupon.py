@@ -2,6 +2,8 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
+from app.infrastructure.database import Base, TimestampMixin
+from app.shared.enums import CouponStatus, DiscountType
 from sqlalchemy import (
     CheckConstraint,
     DateTime,
@@ -11,9 +13,6 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
-
-from app.infrastructure.database import Base, TimestampMixin
-from app.shared.enums import CouponStatus, DiscountType
 
 
 class PlatformCoupon(TimestampMixin, Base):
