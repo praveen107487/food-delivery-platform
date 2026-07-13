@@ -97,3 +97,15 @@ class CartRepository:
         await self._session.execute(statement)
 
         await self._session.flush()
+
+    async def get_cart_by_id(
+        self,
+        cart_id: UUID,
+    ) -> Cart | None:
+        query = select(Cart).where(
+            Cart.cart_id == cart_id,
+        )
+
+        result = await self._session.execute(query)
+
+        return result.scalar_one_or_none()
