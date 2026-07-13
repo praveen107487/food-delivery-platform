@@ -3,6 +3,7 @@ from uuid import UUID
 
 from sqlalchemy import Result, Select, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.restaurant.models.menu_item import MenuItem
 from app.restaurant.models.restaurant import Restaurant
@@ -39,6 +40,23 @@ class RestaurantRepository:
         )
 
         result: Result[tuple[Restaurant]] = await self._session.execute(query)
+
+        return result.scalar_one_or_none()
+
+    async def get_menu_item_by_id(
+        self,
+        menu_item_id: UUID,
+    ) -> MenuItem | None:
+        query = (
+            self._menu_item_query()
+            .options(selectinload(MenuItem.restaurant))
+            .where(
+                MenuItem.menu_item_id == menu_item_id,
+                MenuItem.is_available.is_(True),
+            )
+        )
+
+        result: Result[tuple[MenuItem]] = await self._session.execute(query)
 
         return result.scalar_one_or_none()
 
