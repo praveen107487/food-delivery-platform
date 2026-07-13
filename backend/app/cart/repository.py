@@ -2,6 +2,7 @@ from uuid import UUID
 
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.cart.models import Cart, CartItem
 from app.shared.enums import CartStatus
@@ -11,13 +12,33 @@ class CartRepository:
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
+    def _cart_query(self):
+        return select(Cart).options(
+            selectinload(Cart.restaurant),
+            selectinload(Cart.cart_items).selectinload(
+                CartItem.menu_item,
+            ),
+        )
+
     async def get_active_cart(
         self,
         customer_id: UUID,
     ) -> Cart | None:
-        query = select(Cart).where(
+        query = self._cart_query().where(
             Cart.customer_id == customer_id,
             Cart.status == CartStatus.ACTIVE,
+        )
+
+        result = await self._session.execute(query)
+
+        return result.scalar_one_or_none()
+
+    async def get_cart_by_id(
+        self,
+        cart_id: UUID,
+    ) -> Cart | None:
+        query = self._cart_query().where(
+            Cart.cart_id == cart_id,
         )
 
         result = await self._session.execute(query)
@@ -39,9 +60,15 @@ class CartRepository:
         cart_id: UUID,
         menu_item_id: UUID,
     ) -> CartItem | None:
-        query = select(CartItem).where(
-            CartItem.cart_id == cart_id,
-            CartItem.menu_item_id == menu_item_id,
+        query = (
+            select(CartItem)
+            .options(
+                selectinload(CartItem.menu_item),
+            )
+            .where(
+                CartItem.cart_id == cart_id,
+                CartItem.menu_item_id == menu_item_id,
+            )
         )
 
         result = await self._session.execute(query)
@@ -52,8 +79,17 @@ class CartRepository:
         self,
         cart_item_id: UUID,
     ) -> CartItem | None:
-        query = select(CartItem).where(
-            CartItem.cart_item_id == cart_item_id,
+        query = (
+            select(CartItem)
+            .options(
+                selectinload(CartItem.menu_item),
+                selectinload(CartItem.cart).selectinload(
+                    Cart.restaurant,
+                ),
+            )
+            .where(
+                CartItem.cart_item_id == cart_item_id,
+            )
         )
 
         result = await self._session.execute(query)
@@ -97,15 +133,3 @@ class CartRepository:
         await self._session.execute(statement)
 
         await self._session.flush()
-
-    async def get_cart_by_id(
-        self,
-        cart_id: UUID,
-    ) -> Cart | None:
-        query = select(Cart).where(
-            Cart.cart_id == cart_id,
-        )
-
-        result = await self._session.execute(query)
-
-        return result.scalar_one_or_none()

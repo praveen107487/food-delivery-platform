@@ -83,7 +83,6 @@ class CartService:
             await self._repository.add_cart_item(
                 cart_item,
             )
-
         else:
             cart_item.quantity += quantity
 
@@ -94,9 +93,7 @@ class CartService:
         try:
             await self._session.commit()
 
-            await self._session.refresh(cart)
-
-            return cart
+            return await self.get_cart(customer_id)
 
         except Exception:
             await self._session.rollback()
@@ -131,9 +128,7 @@ class CartService:
 
             await self._session.commit()
 
-            await self._session.refresh(cart)
-
-            return cart
+            return await self.get_cart(customer_id)
 
         except Exception:
             await self._session.rollback()
@@ -165,9 +160,7 @@ class CartService:
 
             await self._session.commit()
 
-            await self._session.refresh(cart)
-
-            return cart
+            return await self.get_cart(customer_id)
 
         except Exception:
             await self._session.rollback()
@@ -176,7 +169,7 @@ class CartService:
     async def clear_cart(
         self,
         customer_id: UUID,
-    ) -> None:
+    ) -> Cart:
         cart = await self._repository.get_active_cart(
             customer_id,
         )
@@ -190,6 +183,15 @@ class CartService:
             )
 
             await self._session.commit()
+
+            updated_cart = await self._repository.get_cart_by_id(
+                cart.cart_id,
+            )
+
+            if updated_cart is None:
+                raise CartNotFoundException()
+
+            return updated_cart
 
         except Exception:
             await self._session.rollback()
