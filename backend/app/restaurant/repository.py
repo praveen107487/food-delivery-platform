@@ -42,6 +42,19 @@ class RestaurantRepository:
 
         return result.scalar_one_or_none()
 
+    async def get_menu_item_by_id(
+        self,
+        menu_item_id: UUID,
+    ) -> MenuItem | None:
+        query = self._menu_item_query().where(
+            MenuItem.menu_item_id == menu_item_id,
+            MenuItem.is_available.is_(True),
+        )
+
+        result: Result[tuple[MenuItem]] = await self._session.execute(query)
+
+        return result.scalar_one_or_none()
+
     async def get_menu_items(
         self,
         restaurant_id: UUID,
