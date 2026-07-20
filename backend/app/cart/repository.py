@@ -1,6 +1,6 @@
 from uuid import UUID
 
-from sqlalchemy import delete, select
+from sqlalchemy import Result, Select, delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -12,7 +12,7 @@ class CartRepository:
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
 
-    def _cart_query(self):
+    def _cart_query(self) -> Select[tuple[Cart]]:
         return select(Cart).options(
             selectinload(Cart.restaurant),
             selectinload(Cart.cart_items).selectinload(
@@ -29,7 +29,7 @@ class CartRepository:
             Cart.status == CartStatus.ACTIVE,
         )
 
-        result = await self._session.execute(query)
+        result: Result[tuple[Cart]] = await self._session.execute(query)
 
         return result.scalar_one_or_none()
 
@@ -41,7 +41,7 @@ class CartRepository:
             Cart.cart_id == cart_id,
         )
 
-        result = await self._session.execute(query)
+        result: Result[tuple[Cart]] = await self._session.execute(query)
 
         return result.scalar_one_or_none()
 
@@ -71,7 +71,7 @@ class CartRepository:
             )
         )
 
-        result = await self._session.execute(query)
+        result: Result[tuple[CartItem]] = await self._session.execute(query)
 
         return result.scalar_one_or_none()
 
@@ -92,7 +92,7 @@ class CartRepository:
             )
         )
 
-        result = await self._session.execute(query)
+        result: Result[tuple[CartItem]] = await self._session.execute(query)
 
         return result.scalar_one_or_none()
 

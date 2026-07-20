@@ -1,7 +1,8 @@
 import uuid
+from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Enum, ForeignKey
+from sqlalchemy import Enum, ForeignKey, Numeric, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -39,6 +40,17 @@ class Cart(TimestampMixin, Base):
         Enum(CartStatus, name="cart_status"),
         nullable=False,
         default=CartStatus.ACTIVE,
+    )
+
+    applied_coupon_code: Mapped[str | None] = mapped_column(
+        String(50),
+        nullable=True,
+    )
+
+    discount_amount: Mapped[Decimal] = mapped_column(
+        Numeric(10, 2),
+        nullable=False,
+        default=Decimal("0.00"),
     )
 
     customer: Mapped["Customer"] = relationship(

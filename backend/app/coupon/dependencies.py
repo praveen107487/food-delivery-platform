@@ -9,7 +9,10 @@ from app.infrastructure.database.dependencies import get_db
 
 
 def get_coupon_repository(
-    session: Annotated[AsyncSession, Depends(get_db)],
+    session: Annotated[
+        AsyncSession,
+        Depends(get_db),
+    ],
 ) -> CouponRepository:
     return CouponRepository(session)
 
