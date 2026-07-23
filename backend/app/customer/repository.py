@@ -129,3 +129,13 @@ class CustomerRepository:
         await self._session.delete(address)
 
         await self._session.flush()
+
+    async def create(
+        self,
+        customer: Customer,
+    ) -> Customer:
+        self._session.add(customer)
+
+        await self._session.flush()
+
+        return customer
