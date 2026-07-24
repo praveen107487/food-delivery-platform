@@ -6,8 +6,16 @@ class PaymentNotFoundException(PaymentException):
     """Raised when a payment is not found."""
 
 
+class PaymentNotEligibleException(PaymentException):
+    """Raised when a payment cannot be created for an order."""
+
+
 class PaymentAlreadySuccessfulException(PaymentException):
     """Raised when an order already has a successful payment."""
+
+
+class PaymentAccessDeniedException(PaymentException):
+    """Raised when a customer attempts to access another customer's payment."""
 
 
 class PaymentAmountMismatchException(PaymentException):
@@ -16,6 +24,10 @@ class PaymentAmountMismatchException(PaymentException):
 
 class PaymentRetryNotAllowedException(PaymentException):
     """Raised when a payment retry is not allowed."""
+
+
+class PaymentVerificationFailedException(PaymentException):
+    """Raised when payment verification fails."""
 
 
 class InvalidPaymentStatusTransitionException(PaymentException):
