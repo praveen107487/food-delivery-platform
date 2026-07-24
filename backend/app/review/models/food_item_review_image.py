@@ -6,6 +6,7 @@ from app.infrastructure.database import Base
 from sqlalchemy import DateTime, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy.sql import func
 
 if TYPE_CHECKING:
     from app.review.models.food_item_review import FoodItemReview
@@ -34,6 +35,7 @@ class FoodItemReviewImage(Base):
     uploaded_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
+        server_default=func.now(),
     )
 
     review: Mapped["FoodItemReview"] = relationship(

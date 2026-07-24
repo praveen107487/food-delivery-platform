@@ -9,6 +9,7 @@ from sqlalchemy import (
     DateTime,
     Enum,
     ForeignKey,
+    Index,
     String,
     Text,
     func,
@@ -22,6 +23,26 @@ if TYPE_CHECKING:
 
 class Notification(Base):
     __tablename__ = "notifications"
+
+    __table_args__ = (
+        Index(
+            "ix_notifications_customer_id",
+            "customer_id",
+        ),
+        Index(
+            "ix_notifications_is_read",
+            "is_read",
+        ),
+        Index(
+            "ix_notifications_created_at",
+            "created_at",
+        ),
+        Index(
+            "ix_notifications_customer_is_read",
+            "customer_id",
+            "is_read",
+        ),
+    )
 
     notification_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),

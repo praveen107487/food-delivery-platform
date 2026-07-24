@@ -3,7 +3,15 @@ from datetime import datetime
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import DateTime, Enum, ForeignKey, Numeric, String
+from sqlalchemy import (
+    CheckConstraint,
+    DateTime,
+    Enum,
+    ForeignKey,
+    Index,
+    Numeric,
+    String,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -29,6 +37,49 @@ if TYPE_CHECKING:
 
 class Order(TimestampMixin, Base):
     __tablename__ = "orders"
+
+    __table_args__ = (
+        CheckConstraint(
+            "subtotal >= 0",
+            name="ck_orders_subtotal_non_negative",
+        ),
+        CheckConstraint(
+            "discount_amount >= 0",
+            name="ck_orders_discount_amount_non_negative",
+        ),
+        CheckConstraint(
+            "delivery_fee >= 0",
+            name="ck_orders_delivery_fee_non_negative",
+        ),
+        CheckConstraint(
+            "tax_amount >= 0",
+            name="ck_orders_tax_amount_non_negative",
+        ),
+        CheckConstraint(
+            "grand_total >= 0",
+            name="ck_orders_grand_total_non_negative",
+        ),
+        CheckConstraint(
+            "payment_method IN ('ONLINE', 'COD')",
+            name="ck_orders_payment_method",
+        ),
+        Index(
+            "ix_orders_customer_id",
+            "customer_id",
+        ),
+        Index(
+            "ix_orders_restaurant_id",
+            "restaurant_id",
+        ),
+        Index(
+            "ix_orders_current_status",
+            "current_status",
+        ),
+        Index(
+            "ix_orders_created_at",
+            "created_at",
+        ),
+    )
 
     order_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),

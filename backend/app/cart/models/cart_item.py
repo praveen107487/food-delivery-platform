@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy import (
     CheckConstraint,
     ForeignKey,
+    Index,
     Integer,
     Numeric,
     UniqueConstraint,
@@ -64,6 +65,14 @@ class CartItem(TimestampMixin, Base):
             "cart_id",
             "menu_item_id",
             name="uq_cart_items_cart_menu_item",
+        ),
+        Index(
+            "ix_cart_items_cart_id",
+            "cart_id",
+        ),
+        Index(
+            "ix_cart_items_menu_item_id",
+            "menu_item_id",
         ),
     )
 

@@ -2,7 +2,16 @@ import uuid
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy import (
+    Boolean,
+    CheckConstraint,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    String,
+    Text,
+)
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -17,6 +26,41 @@ if TYPE_CHECKING:
 
 class MenuItem(TimestampMixin, Base):
     __tablename__ = "menu_items"
+
+    __table_args__ = (
+        CheckConstraint(
+            "price >= 0",
+            name="ck_menu_items_price_non_negative",
+        ),
+        CheckConstraint(
+            "preparation_time > 0",
+            name="ck_menu_items_preparation_time_positive",
+        ),
+        CheckConstraint(
+            "name <> ''",
+            name="ck_menu_items_name_not_empty",
+        ),
+        CheckConstraint(
+            "category <> ''",
+            name="ck_menu_items_category_not_empty",
+        ),
+        Index(
+            "ix_menu_items_restaurant_id",
+            "restaurant_id",
+        ),
+        Index(
+            "ix_menu_items_category",
+            "category",
+        ),
+        Index(
+            "ix_menu_items_is_available",
+            "is_available",
+        ),
+        Index(
+            "ix_menu_items_name",
+            "name",
+        ),
+    )
 
     menu_item_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),

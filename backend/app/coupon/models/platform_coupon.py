@@ -8,6 +8,7 @@ from sqlalchemy import (
     CheckConstraint,
     DateTime,
     Enum,
+    Index,
     Numeric,
     String,
 )
@@ -80,5 +81,13 @@ class PlatformCoupon(TimestampMixin, Base):
         CheckConstraint(
             "valid_from < valid_until",
             name="ck_platform_coupons_valid_date_range",
+        ),
+        Index(
+            "ix_platform_coupons_status",
+            "status",
+        ),
+        Index(
+            "ix_platform_coupons_valid_until",
+            "valid_until",
         ),
     )

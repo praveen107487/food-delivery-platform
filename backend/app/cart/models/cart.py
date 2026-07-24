@@ -2,7 +2,7 @@ import uuid
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Enum, ForeignKey, Numeric, String
+from sqlalchemy import Enum, ForeignKey, Index, Numeric, String, text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -17,6 +17,28 @@ if TYPE_CHECKING:
 
 class Cart(TimestampMixin, Base):
     __tablename__ = "carts"
+
+    __table_args__ = (
+        Index(
+            "ix_carts_customer_id",
+            "customer_id",
+        ),
+        Index(
+            "ix_carts_restaurant_id",
+            "restaurant_id",
+        ),
+        Index(
+            "ix_carts_customer_status",
+            "customer_id",
+            "status",
+        ),
+        Index(
+            "uq_carts_customer_active",
+            "customer_id",
+            unique=True,
+            postgresql_where=text("status = 'ACTIVE'"),
+        ),
+    )
 
     cart_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),

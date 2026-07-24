@@ -1,7 +1,7 @@
 import uuid
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, ForeignKey, String, Text
+from sqlalchemy import Boolean, CheckConstraint, ForeignKey, Index, String, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -14,6 +14,38 @@ if TYPE_CHECKING:
 
 class SavedAddress(TimestampMixin, Base):
     __tablename__ = "saved_addresses"
+
+    __table_args__ = (
+        CheckConstraint(
+            "recipient_name <> ''",
+            name="ck_saved_addresses_recipient_name_not_empty",
+        ),
+        CheckConstraint(
+            "street <> ''",
+            name="ck_saved_addresses_street_not_empty",
+        ),
+        CheckConstraint(
+            "city <> ''",
+            name="ck_saved_addresses_city_not_empty",
+        ),
+        CheckConstraint(
+            "state <> ''",
+            name="ck_saved_addresses_state_not_empty",
+        ),
+        CheckConstraint(
+            "postal_code <> ''",
+            name="ck_saved_addresses_postal_code_not_empty",
+        ),
+        Index(
+            "ix_saved_addresses_customer_id",
+            "customer_id",
+        ),
+        Index(
+            "ix_saved_addresses_customer_default",
+            "customer_id",
+            "is_default",
+        ),
+    )
 
     address_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),
