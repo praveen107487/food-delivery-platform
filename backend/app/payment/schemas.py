@@ -1,47 +1,78 @@
 from datetime import datetime
 from decimal import Decimal
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from app.shared.enums import PaymentStatus
+PaymentMethod = Literal["ONLINE", "CASH_ON_DELIVERY"]
+PaymentStatusView = Literal[
+    "PENDING",
+    "PROCESSING",
+    "COMPLETED",
+    "FAILED",
+    "REFUND_PENDING",
+    "REFUNDED",
+]
 
 
 class PaymentCreateRequest(BaseModel):
-    payment_method: str = Field(
-        ...,
-        examples=["ONLINE"],
+    order_id: UUID = Field(alias="orderId")
+    payment_method: PaymentMethod = Field(alias="paymentMethod")
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PaymentVerificationRequest(BaseModel):
+    gateway_transaction_id: str = Field(
+        alias="gatewayTransactionId",
+        min_length=1,
+        max_length=255,
     )
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class PaymentRetryRequest(BaseModel):
-    payment_method: str = Field(
-        ...,
-        examples=["ONLINE"],
+    payment_method: PaymentMethod = Field(
+        default="ONLINE",
+        alias="paymentMethod",
     )
 
+    model_config = ConfigDict(populate_by_name=True)
 
-class PaymentResponse(BaseModel):
-    model_config = ConfigDict(from_attributes=True)
 
-    payment_id: UUID
-    payment_reference: str
-    order_id: UUID
+class PaymentInitiationResponse(BaseModel):
+    payment_id: UUID = Field(alias="paymentId")
+    order_id: UUID = Field(alias="orderId")
+    payment_method: PaymentMethod = Field(alias="paymentMethod")
+    payment_status: PaymentStatusView = Field(alias="paymentStatus")
+    payment_url: str | None = Field(alias="paymentUrl")
+    expires_at: datetime | None = Field(alias="expiresAt")
 
-    payment_method: str
-    payment_gateway: str | None
-    gateway_transaction_id: str | None
+    model_config = ConfigDict(populate_by_name=True)
 
+
+class PaymentStatusResponse(BaseModel):
+    payment_id: UUID = Field(alias="paymentId")
+    order_id: UUID = Field(alias="orderId")
+    payment_method: PaymentMethod = Field(alias="paymentMethod")
+    payment_status: PaymentStatusView = Field(alias="paymentStatus")
+    paid_at: datetime | None = Field(alias="paidAt")
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PaymentResponse(PaymentStatusResponse):
+    payment_reference: str = Field(alias="paymentReference")
+    payment_gateway: str | None = Field(alias="paymentGateway")
+    gateway_transaction_id: str | None = Field(alias="gatewayTransactionId")
     amount: Decimal
-
-    payment_status: PaymentStatus
-
-    paid_at: datetime | None
-
-    failure_reason: str | None
-
-    created_at: datetime
+    failure_reason: str | None = Field(alias="failureReason")
+    created_at: datetime = Field(alias="createdAt")
 
 
 class PaymentHistoryResponse(BaseModel):
     payments: list[PaymentResponse]
+
+    model_config = ConfigDict(populate_by_name=True)

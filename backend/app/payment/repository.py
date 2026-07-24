@@ -1,8 +1,9 @@
 from collections.abc import Sequence
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import Select, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.payment.models.payment import Payment
 from app.shared.enums.payment_status import PaymentStatus
@@ -11,6 +12,11 @@ from app.shared.enums.payment_status import PaymentStatus
 class PaymentRepository:
     def __init__(self, session: AsyncSession) -> None:
         self._session = session
+
+    def _payment_query(self) -> Select[tuple[Payment]]:
+        return select(Payment).options(
+            selectinload(Payment.order),
+        )
 
     async def create(
         self,
@@ -26,7 +32,7 @@ class PaymentRepository:
         self,
         payment_id: UUID,
     ) -> Payment | None:
-        statement = select(Payment).where(Payment.payment_id == payment_id)
+        statement = self._payment_query().where(Payment.payment_id == payment_id)
 
         result = await self._session.execute(statement)
 
@@ -36,7 +42,7 @@ class PaymentRepository:
         self,
         payment_reference: str,
     ) -> Payment | None:
-        statement = select(Payment).where(
+        statement = self._payment_query().where(
             Payment.payment_reference == payment_reference
         )
 
@@ -50,7 +56,7 @@ class PaymentRepository:
     ) -> Sequence[Payment]:
 
         statement = (
-            select(Payment)
+            self._payment_query()
             .where(Payment.order_id == order_id)
             .order_by(Payment.created_at.desc())
         )
@@ -63,7 +69,7 @@ class PaymentRepository:
         self,
         order_id: UUID,
     ) -> Payment | None:
-        statement = select(Payment).where(
+        statement = self._payment_query().where(
             Payment.order_id == order_id,
             Payment.payment_status == PaymentStatus.SUCCESS,
         )
