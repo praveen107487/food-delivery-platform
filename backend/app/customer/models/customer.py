@@ -3,7 +3,7 @@ from __future__ import annotations
 import uuid
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String
+from sqlalchemy import CheckConstraint, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -21,6 +21,17 @@ if TYPE_CHECKING:
 
 class Customer(TimestampMixin, Base):
     __tablename__ = "customers"
+
+    __table_args__ = (
+        CheckConstraint(
+            "first_name <> ''",
+            name="ck_customers_first_name_not_empty",
+        ),
+        CheckConstraint(
+            "last_name <> ''",
+            name="ck_customers_last_name_not_empty",
+        ),
+    )
 
     customer_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),

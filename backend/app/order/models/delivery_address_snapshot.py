@@ -10,13 +10,13 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from app.infrastructure.database import Base, TimestampMixin
+from app.infrastructure.database import Base
 
 if TYPE_CHECKING:
     from app.order.models.order import Order
 
 
-class DeliveryAddressSnapshot(TimestampMixin, Base):
+class DeliveryAddressSnapshot(Base):
     __tablename__ = "delivery_address_snapshots"
 
     order_id: Mapped[uuid.UUID] = mapped_column(

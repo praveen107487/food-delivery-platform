@@ -12,7 +12,7 @@ class CustomerResponse(BaseModel):
     phone_number: str
     first_name: str
     last_name: str
-    create_at: datetime
+    created_at: datetime
     updated_at: datetime
 
 

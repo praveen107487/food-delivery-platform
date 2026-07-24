@@ -3,7 +3,7 @@ from datetime import time
 from decimal import Decimal
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Boolean, Numeric, String, Text, Time
+from sqlalchemy import Boolean, CheckConstraint, Index, Numeric, String, Text, Time
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -19,6 +19,41 @@ if TYPE_CHECKING:
 
 class Restaurant(TimestampMixin, Base):
     __tablename__ = "restaurants"
+
+    __table_args__ = (
+        CheckConstraint(
+            "restaurant_name <> ''",
+            name="ck_restaurants_restaurant_name_not_empty",
+        ),
+        CheckConstraint(
+            "opening_time < closing_time",
+            name="ck_restaurants_opening_before_closing",
+        ),
+        CheckConstraint(
+            "average_rating BETWEEN 0 AND 5",
+            name="ck_restaurants_average_rating_range",
+        ),
+        Index(
+            "ix_restaurants_restaurant_name",
+            "restaurant_name",
+        ),
+        Index(
+            "ix_restaurants_cuisine_type",
+            "cuisine_type",
+        ),
+        Index(
+            "ix_restaurants_city",
+            "city",
+        ),
+        Index(
+            "ix_restaurants_is_active",
+            "is_active",
+        ),
+        Index(
+            "ix_restaurants_average_rating",
+            "average_rating",
+        ),
+    )
 
     restaurant_id: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),

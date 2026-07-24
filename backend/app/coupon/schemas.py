@@ -4,6 +4,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
+from app.shared.enums.coupon_status import CouponStatus
 from app.shared.enums.discount_type import DiscountType
 
 
@@ -17,6 +18,9 @@ class CouponDetails(BaseModel):
     minimum_order_amount: Decimal
     valid_from: datetime
     valid_until: datetime
+    status: CouponStatus
+    created_at: datetime
+    updated_at: datetime
 
 
 class PlatformCouponDetails(CouponDetails):
