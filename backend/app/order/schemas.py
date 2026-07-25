@@ -105,3 +105,17 @@ class CancelOrderRequest(BaseModel):
         default=None,
         max_length=500,
     )
+
+
+class CheckoutRequest(BaseModel):
+    model_config = ConfigDict(
+        extra="forbid",
+        str_strip_whitespace=True,
+    )
+
+    payment_method: str
+    delivery_address_id: UUID
+    customer_notes: str | None = Field(
+        default=None,
+        max_length=500,
+    )

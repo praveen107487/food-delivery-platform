@@ -17,13 +17,13 @@ PAYMENT_SESSION_TTL_MINUTES = 15
 
 def to_api_payment_method(payment_method: str) -> PaymentMethod:
     if payment_method == "COD":
-        return "CASH_ON_DELIVERY"
+        return "COD"
 
     return "ONLINE"
 
 
 def to_storage_payment_method(payment_method: PaymentMethod) -> str:
-    if payment_method == "CASH_ON_DELIVERY":
+    if payment_method == "COD":
         return "COD"
 
     return payment_method

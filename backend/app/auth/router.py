@@ -79,3 +79,18 @@ async def get_me(
     ],
 ) -> AuthenticatedCustomerResponse:
     return AuthenticatedCustomerResponse.model_validate(customer)
+
+
+@router.post(
+    "/logout",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def logout(
+    customer: Annotated[
+        Customer,
+        Depends(get_current_customer),
+    ],
+) -> None:
+    # Stateless JWT authentication - logout is client-side
+    # Client should discard the JWT token
+    return None

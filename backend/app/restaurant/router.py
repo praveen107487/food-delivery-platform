@@ -36,14 +36,45 @@ async def get_restaurants(
         RestaurantService,
         Depends(get_restaurant_service),
     ],
+    page: Annotated[
+        int,
+        Query(
+            ge=1,
+            default=1,
+            description="Page number",
+        ),
+    ] = 1,
+    page_size: Annotated[
+        int,
+        Query(
+            ge=1,
+            le=100,
+            default=20,
+            description="Number of items per page",
+        ),
+    ] = 20,
+    cuisine_type: Annotated[
+        str | None,
+        Query(
+            max_length=50,
+            description="Filter by cuisine type",
+        ),
+    ] = None,
 ) -> RestaurantListResponse:
-    restaurants = await service.get_restaurants()
+    restaurants, total_count = await service.get_restaurants(
+        page=page,
+        page_size=page_size,
+        cuisine_type=cuisine_type,
+    )
 
     return RestaurantListResponse(
         restaurants=[
             RestaurantSummaryResponse.model_validate(restaurant)
             for restaurant in restaurants
         ],
+        total_count=total_count,
+        page=page,
+        page_size=page_size,
     )
 
 
@@ -54,6 +85,10 @@ async def get_restaurants(
     summary="Search restaurants",
 )
 async def search_restaurants(
+    service: Annotated[
+        RestaurantService,
+        Depends(get_restaurant_service),
+    ],
     keyword: Annotated[
         str,
         Query(
@@ -62,18 +97,38 @@ async def search_restaurants(
             description="Search keyword",
         ),
     ],
-    service: Annotated[
-        RestaurantService,
-        Depends(get_restaurant_service),
-    ],
+    page: Annotated[
+        int,
+        Query(
+            ge=1,
+            default=1,
+            description="Page number",
+        ),
+    ] = 1,
+    page_size: Annotated[
+        int,
+        Query(
+            ge=1,
+            le=100,
+            default=20,
+            description="Number of items per page",
+        ),
+    ] = 20,
 ) -> RestaurantListResponse:
-    restaurants = await service.search_restaurants(keyword)
+    restaurants, total_count = await service.search_restaurants(
+        keyword=keyword,
+        page=page,
+        page_size=page_size,
+    )
 
     return RestaurantListResponse(
         restaurants=[
             RestaurantSummaryResponse.model_validate(restaurant)
             for restaurant in restaurants
         ],
+        total_count=total_count,
+        page=page,
+        page_size=page_size,
     )
 
 
@@ -118,16 +173,38 @@ async def get_menu_items(
         RestaurantService,
         Depends(get_restaurant_service),
     ],
+    page: Annotated[
+        int,
+        Query(
+            ge=1,
+            default=1,
+            description="Page number",
+        ),
+    ] = 1,
+    page_size: Annotated[
+        int,
+        Query(
+            ge=1,
+            le=100,
+            default=20,
+            description="Number of items per page",
+        ),
+    ] = 20,
 ) -> MenuItemListResponse:
     try:
-        menu_items = await service.get_menu_items(
-            restaurant_id,
+        menu_items, total_count = await service.get_menu_items(
+            restaurant_id=restaurant_id,
+            page=page,
+            page_size=page_size,
         )
 
         return MenuItemListResponse(
             menu_items=[
                 MenuItemResponse.model_validate(menu_item) for menu_item in menu_items
             ],
+            total_count=total_count,
+            page=page,
+            page_size=page_size,
         )
 
     except RestaurantNotFoundException as exc:
@@ -144,6 +221,10 @@ async def get_menu_items(
     summary="Search menu items",
 )
 async def search_menu_items(
+    service: Annotated[
+        RestaurantService,
+        Depends(get_restaurant_service),
+    ],
     keyword: Annotated[
         str,
         Query(
@@ -152,15 +233,35 @@ async def search_menu_items(
             description="Search keyword",
         ),
     ],
-    service: Annotated[
-        RestaurantService,
-        Depends(get_restaurant_service),
-    ],
+    page: Annotated[
+        int,
+        Query(
+            ge=1,
+            default=1,
+            description="Page number",
+        ),
+    ] = 1,
+    page_size: Annotated[
+        int,
+        Query(
+            ge=1,
+            le=100,
+            default=20,
+            description="Number of items per page",
+        ),
+    ] = 20,
 ) -> MenuItemListResponse:
-    menu_items = await service.search_menu_items(keyword)
+    menu_items, total_count = await service.search_menu_items(
+        keyword=keyword,
+        page=page,
+        page_size=page_size,
+    )
 
     return MenuItemListResponse(
         menu_items=[
             MenuItemResponse.model_validate(menu_item) for menu_item in menu_items
         ],
+        total_count=total_count,
+        page=page,
+        page_size=page_size,
     )

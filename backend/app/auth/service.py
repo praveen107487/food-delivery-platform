@@ -10,10 +10,12 @@ from app.auth.exceptions import (
 )
 from app.auth.repository import AuthenticationRepository
 from app.auth.schemas import (
+    AuthenticatedCustomerResponse,
     CustomerLoginRequest,
     CustomerRegistrationRequest,
     TokenResponse,
 )
+from app.core.config import get_settings
 from app.core.security import (
     create_access_token,
     decode_access_token,
@@ -21,6 +23,8 @@ from app.core.security import (
     verify_password,
 )
 from app.customer.models.customer import Customer
+
+settings = get_settings()
 
 
 class AuthenticationService:
@@ -83,6 +87,8 @@ class AuthenticationService:
 
         return TokenResponse(
             access_token=access_token,
+            expires_in=settings.jwt_access_token_expire_minutes * 60,
+            customer=AuthenticatedCustomerResponse.model_validate(customer),
         )
 
     async def get_current_customer(

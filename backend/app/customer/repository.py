@@ -67,6 +67,22 @@ class CustomerRepository:
 
         return result.scalar_one_or_none()
 
+    async def get_address_by_id_and_customer(
+        self,
+        address_id: UUID,
+        customer_id: UUID,
+    ) -> SavedAddress | None:
+        statement: Select[tuple[SavedAddress]] = select(
+            SavedAddress,
+        ).where(
+            SavedAddress.address_id == address_id,
+            SavedAddress.customer_id == customer_id,
+        )
+
+        result = await self._session.execute(statement)
+
+        return result.scalar_one_or_none()
+
     async def list_addresses(
         self,
         customer_id: UUID,

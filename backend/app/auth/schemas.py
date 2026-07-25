@@ -19,11 +19,6 @@ class CustomerLoginRequest(BaseModel):
     password: PasswordStr
 
 
-class TokenResponse(BaseModel):
-    access_token: str
-    token_type: str = AUTHORIZATION_SCHEME
-
-
 class AuthenticatedCustomerResponse(BaseModel):
     customer_id: uuid.UUID
     email: EmailStr
@@ -32,3 +27,10 @@ class AuthenticatedCustomerResponse(BaseModel):
     phone_number: str
 
     model_config = ConfigDict(from_attributes=True)
+
+
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = AUTHORIZATION_SCHEME
+    expires_in: int
+    customer: AuthenticatedCustomerResponse
