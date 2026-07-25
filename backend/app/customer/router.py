@@ -37,7 +37,7 @@ async def get_profile(
 
 
 @router.patch(
-    "me",
+    "/me",
     response_model=CustomerResponse,
     status_code=status.HTTP_200_OK,
 )

@@ -133,3 +133,11 @@ class CartRepository:
         await self._session.execute(statement)
 
         await self._session.flush()
+
+    async def update_cart_status(
+        self,
+        cart: Cart,
+    ) -> Cart:
+        await self._session.flush()
+
+        return cart

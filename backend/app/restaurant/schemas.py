@@ -47,7 +47,13 @@ class MenuItemResponse(BaseModel):
 
 class RestaurantListResponse(BaseModel):
     restaurants: list[RestaurantSummaryResponse]
+    total_count: int
+    page: int
+    page_size: int
 
 
 class MenuItemListResponse(BaseModel):
     menu_items: list[MenuItemResponse]
+    total_count: int
+    page: int
+    page_size: int

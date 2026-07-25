@@ -20,3 +20,7 @@ class OrderAccessDeniedError(OrderError):
 
 class CheckoutValidationError(OrderError):
     """Raised when checkout validation fails."""
+
+
+class ActiveOrderNotFoundError(OrderError):
+    """Raised when the customer has no active order."""

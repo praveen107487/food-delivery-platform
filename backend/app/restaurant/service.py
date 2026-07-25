@@ -16,8 +16,15 @@ class RestaurantService:
 
     async def get_restaurants(
         self,
-    ) -> Sequence[Restaurant]:
-        return await self._repository.get_restaurants()
+        page: int = 1,
+        page_size: int = 20,
+        cuisine_type: str | None = None,
+    ) -> tuple[Sequence[Restaurant], int]:
+        return await self._repository.get_restaurants(
+            page=page,
+            page_size=page_size,
+            cuisine_type=cuisine_type,
+        )
 
     async def get_restaurant(
         self,
@@ -33,25 +40,37 @@ class RestaurantService:
     async def get_menu_items(
         self,
         restaurant_id: UUID,
-    ) -> Sequence[MenuItem]:
+        page: int = 1,
+        page_size: int = 20,
+    ) -> tuple[Sequence[MenuItem], int]:
         await self.get_restaurant(restaurant_id)
 
         return await self._repository.get_menu_items(
-            restaurant_id,
+            restaurant_id=restaurant_id,
+            page=page,
+            page_size=page_size,
         )
 
     async def search_restaurants(
         self,
         keyword: str,
-    ) -> Sequence[Restaurant]:
+        page: int = 1,
+        page_size: int = 20,
+    ) -> tuple[Sequence[Restaurant], int]:
         return await self._repository.search_restaurants(
-            keyword,
+            keyword=keyword,
+            page=page,
+            page_size=page_size,
         )
 
     async def search_menu_items(
         self,
         keyword: str,
-    ) -> Sequence[MenuItem]:
+        page: int = 1,
+        page_size: int = 20,
+    ) -> tuple[Sequence[MenuItem], int]:
         return await self._repository.search_menu_items(
-            keyword,
+            keyword=keyword,
+            page=page,
+            page_size=page_size,
         )

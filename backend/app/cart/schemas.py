@@ -32,6 +32,14 @@ class CartItemResponse(BaseModel):
     total_price: Decimal
 
 
+class CartPricing(BaseModel):
+    subtotal: Decimal
+    discount: Decimal
+    delivery_fee: Decimal
+    tax_amount: Decimal
+    total: Decimal
+
+
 class CartResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -43,6 +51,4 @@ class CartResponse(BaseModel):
 
     items: list[CartItemResponse]
 
-    subtotal: Decimal
-    discount: Decimal
-    total: Decimal
+    pricing: CartPricing

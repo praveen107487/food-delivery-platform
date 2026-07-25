@@ -3,6 +3,7 @@ from decimal import Decimal
 from app.cart.models import Cart, CartItem
 from app.cart.schemas import (
     CartItemResponse,
+    CartPricing,
     CartResponse,
 )
 
@@ -31,8 +32,18 @@ def map_cart(
     )
 
     discount = cart.discount_amount
+    delivery_fee = Decimal("0.00")
+    tax_amount = Decimal("0.00")
 
-    total = subtotal - discount
+    total = subtotal - discount + delivery_fee + tax_amount
+
+    pricing = CartPricing(
+        subtotal=subtotal,
+        discount=discount,
+        delivery_fee=delivery_fee,
+        tax_amount=tax_amount,
+        total=total,
+    )
 
     return CartResponse(
         cart_id=cart.cart_id,
@@ -40,7 +51,5 @@ def map_cart(
         restaurant_name=cart.restaurant.restaurant_name,
         applied_coupon_code=cart.applied_coupon_code,
         items=items,
-        subtotal=subtotal,
-        discount=discount,
-        total=total,
+        pricing=pricing,
     )

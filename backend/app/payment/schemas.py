@@ -5,7 +5,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-PaymentMethod = Literal["ONLINE", "CASH_ON_DELIVERY"]
+PaymentMethod = Literal["ONLINE", "COD"]
 PaymentStatusView = Literal[
     "PENDING",
     "PROCESSING",
