@@ -16,6 +16,7 @@ from app.order.exceptions import (
 from app.order.schemas import (
     CheckoutRequest,
     OrderDetailsResponse,
+    OrderListResponse,
     OrderSummaryResponse,
 )
 from app.order.service import OrderService
@@ -123,7 +124,7 @@ async def get_order(
 
 @router.get(
     "/history",
-    response_model=list[OrderSummaryResponse],
+    response_model=OrderListResponse,
     status_code=status.HTTP_200_OK,
 )
 async def get_order_history(
@@ -135,12 +136,31 @@ async def get_order_history(
         OrderService,
         Depends(get_order_service),
     ],
-    page: int = Query(ge=1, default=1),
-    page_size: int = Query(ge=1, le=100, default=20),
-) -> list[OrderSummaryResponse]:
-    orders = await service.list_orders(
+    page: Annotated[
+        int,
+        Query(
+            ge=1,
+            description="Page number",
+        ),
+    ] = 1,
+    page_size: Annotated[
+        int,
+        Query(
+            ge=1,
+            le=100,
+            description="Number of items per page",
+        ),
+    ] = 20,
+) -> OrderListResponse:
+    orders, total_count = await service.list_orders(
         customer_id=current_customer.customer_id,
         page=page,
         page_size=page_size,
     )
-    return list(orders)
+
+    return OrderListResponse(
+        orders=list(orders),
+        total_count=total_count,
+        page=page,
+        page_size=page_size,
+    )

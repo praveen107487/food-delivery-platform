@@ -86,7 +86,11 @@ class CustomerRepository:
     async def list_addresses(
         self,
         customer_id: UUID,
-    ) -> list[SavedAddress]:
+        page: int = 1,
+        page_size: int = 20,
+    ) -> tuple[list[SavedAddress], int]:
+        offset = (page - 1) * page_size
+
         statement: Select[tuple[SavedAddress]] = (
             select(SavedAddress)
             .where(SavedAddress.customer_id == customer_id)
@@ -94,11 +98,19 @@ class CustomerRepository:
                 SavedAddress.is_default.desc(),
                 SavedAddress.created_at.asc(),
             )
+            .offset(offset)
+            .limit(page_size)
         )
 
         result = await self._session.execute(statement)
 
-        return list(result.scalars().all())
+        count_statement = select(SavedAddress.address_id).where(
+            SavedAddress.customer_id == customer_id
+        )
+        count_result = await self._session.execute(count_statement)
+        total_count = len(count_result.scalars().all())
+
+        return list(result.scalars().all()), total_count
 
     async def get_default_address(
         self,

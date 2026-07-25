@@ -110,7 +110,7 @@ class CustomerService:
         if customer is None:
             raise CustomerNotFoundException()
 
-        addresses = await self._repository.list_addresses(
+        addresses, _ = await self._repository.list_addresses(
             customer_id,
         )
 
@@ -149,6 +149,8 @@ class CustomerService:
     async def list_addresses(
         self,
         customer_id: UUID,
+        page: int = 1,
+        page_size: int = 20,
     ) -> SavedAddressListResponse:
         customer = await self._repository.get_by_id(
             customer_id,
@@ -157,14 +159,19 @@ class CustomerService:
         if customer is None:
             raise CustomerNotFoundException()
 
-        addresses = await self._repository.list_addresses(
+        addresses, total_count = await self._repository.list_addresses(
             customer_id,
+            page=page,
+            page_size=page_size,
         )
 
         return SavedAddressListResponse(
-            items=[
+            addresses=[
                 self._mapper.to_saved_address_response(address) for address in addresses
             ],
+            total_count=total_count,
+            page=page,
+            page_size=page_size,
         )
 
     async def get_address(
@@ -239,7 +246,7 @@ class CustomerService:
             )
 
             if was_default:
-                remaining_address = await self._repository.list_addresses(
+                remaining_address, _ = await self._repository.list_addresses(
                     customer_id,
                 )
                 if remaining_address:

@@ -127,4 +127,7 @@ class SavedAddressResponse(SavedAddressBase):
 
 
 class SavedAddressListResponse(BaseModel):
-    items: list[SavedAddressResponse]
+    addresses: list[SavedAddressResponse]
+    total_count: int
+    page: int
+    page_size: int

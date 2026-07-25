@@ -107,6 +107,13 @@ class CancelOrderRequest(BaseModel):
     )
 
 
+class OrderListResponse(BaseModel):
+    orders: list[OrderSummaryResponse]
+    total_count: int
+    page: int
+    page_size: int
+
+
 class CheckoutRequest(BaseModel):
     model_config = ConfigDict(
         extra="forbid",

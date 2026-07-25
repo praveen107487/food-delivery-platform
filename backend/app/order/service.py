@@ -98,14 +98,14 @@ class OrderService:
         customer_id: UUID,
         page: int,
         page_size: int,
-    ) -> Sequence[OrderSummaryResponse]:
-        orders = await self._repository.list_orders(
+    ) -> tuple[Sequence[OrderSummaryResponse], int]:
+        orders, total_count = await self._repository.list_orders(
             customer_id=customer_id,
             page=page,
             page_size=page_size,
         )
 
-        return [OrderMapper.to_summary_response(order) for order in orders]
+        return [OrderMapper.to_summary_response(order) for order in orders], total_count
 
     async def cancel_order(
         self,

@@ -112,7 +112,7 @@ class OrderRepository:
         customer_id: UUID,
         page: int,
         page_size: int,
-    ) -> list[Order]:
+    ) -> tuple[list[Order], int]:
         offset = (page - 1) * page_size
 
         query = (
@@ -127,7 +127,9 @@ class OrderRepository:
 
         result: Result[tuple[Order]] = await self._session.execute(query)
 
-        return list(result.scalars().all())
+        total_count = await self.count_customer_orders(customer_id)
+
+        return list(result.scalars().all()), total_count
 
     async def count_customer_orders(
         self,

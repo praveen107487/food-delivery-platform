@@ -88,9 +88,13 @@ async def list_addresses(
     service: CustomerService = Depends(
         get_customer_service,
     ),
+    page: int = 1,
+    page_size: int = 20,
 ) -> SavedAddressListResponse:
     return await service.list_addresses(
         customer_id=current_customer.customer_id,
+        page=page,
+        page_size=page_size,
     )
 
 
