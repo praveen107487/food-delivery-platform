@@ -40,7 +40,6 @@ async def get_restaurants(
         int,
         Query(
             ge=1,
-            default=1,
             description="Page number",
         ),
     ] = 1,
@@ -49,7 +48,6 @@ async def get_restaurants(
         Query(
             ge=1,
             le=100,
-            default=20,
             description="Number of items per page",
         ),
     ] = 20,
@@ -101,7 +99,6 @@ async def search_restaurants(
         int,
         Query(
             ge=1,
-            default=1,
             description="Page number",
         ),
     ] = 1,
@@ -110,7 +107,6 @@ async def search_restaurants(
         Query(
             ge=1,
             le=100,
-            default=20,
             description="Number of items per page",
         ),
     ] = 20,
@@ -177,7 +173,6 @@ async def get_menu_items(
         int,
         Query(
             ge=1,
-            default=1,
             description="Page number",
         ),
     ] = 1,
@@ -186,7 +181,6 @@ async def get_menu_items(
         Query(
             ge=1,
             le=100,
-            default=20,
             description="Number of items per page",
         ),
     ] = 20,
@@ -237,7 +231,6 @@ async def search_menu_items(
         int,
         Query(
             ge=1,
-            default=1,
             description="Page number",
         ),
     ] = 1,
@@ -246,7 +239,6 @@ async def search_menu_items(
         Query(
             ge=1,
             le=100,
-            default=20,
             description="Number of items per page",
         ),
     ] = 20,
