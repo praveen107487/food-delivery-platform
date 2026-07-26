@@ -36,3 +36,11 @@ class OrderItemOwnershipException(Exception):
 
 class ReviewImageNotFoundException(Exception):
     """Raised when the requested review image does not exist."""
+
+
+class RestaurantReviewImageNotFoundException(Exception):
+    """Raised when the requested restaurant review image does not exist."""
+
+
+class FoodItemReviewImageNotFoundException(Exception):
+    """Raised when the requested food item review image does not exist."""
