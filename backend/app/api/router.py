@@ -9,6 +9,7 @@ from app.restaurant.router import (
     menu_item_router,
     restaurant_router,
 )
+from app.review.router import router as review_router
 
 api_router = APIRouter(prefix="/api/v1")
 
@@ -19,3 +20,4 @@ api_router.include_router(cart_router)
 api_router.include_router(customer_router)
 api_router.include_router(order_router)
 api_router.include_router(payment_router)
+api_router.include_router(review_router)
