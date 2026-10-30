@@ -385,6 +385,47 @@ The cart remains active.
 
 ---
 
+## Apply Coupon
+
+```
+POST /api/v1/cart/coupon
+```
+
+Authentication Required
+
+Applies a coupon code to the active cart.
+
+**Request Body**:
+```json
+{
+  "coupon_code": "string"
+}
+```
+
+**Response**: CartResponse with applied coupon discount
+
+The coupon is validated against:
+- Coupon existence and status
+- Validity period
+- Minimum order amount
+- Restaurant compatibility
+
+---
+
+## Remove Coupon
+
+```
+DELETE /api/v1/cart/coupon
+```
+
+Authentication Required
+
+Removes the applied coupon from the cart.
+
+**Response**: CartResponse with coupon removed and discount reset to zero.
+
+---
+
 # Transaction Strategy
 
 All write operations follow the same pattern.
