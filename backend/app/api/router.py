@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.auth.router import router as auth_router
 from app.cart.router import router as cart_router
+from app.coupon.router import router as coupon_router
 from app.customer.router import router as customer_router
 from app.notification.router import router as notification_router
 from app.order.router import router as order_router
@@ -18,6 +19,7 @@ api_router.include_router(auth_router)
 api_router.include_router(restaurant_router)
 api_router.include_router(menu_item_router)
 api_router.include_router(cart_router)
+api_router.include_router(coupon_router)
 api_router.include_router(customer_router)
 api_router.include_router(order_router)
 api_router.include_router(payment_router)
