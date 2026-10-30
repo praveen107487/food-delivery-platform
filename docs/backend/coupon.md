@@ -4,7 +4,9 @@
 
 The Coupon module provides promotional discount functionality for the Food Delivery Platform. It is responsible for validating coupon codes, enforcing coupon business rules, and calculating the applicable discount for a customer's cart.
 
-This module is designed as an **internal business module**. It does not expose public API endpoints of its own. Instead, it is consumed by the Cart module during coupon application and will later be reused by the Order module during checkout to perform final coupon validation before order creation.
+This module provides both:
+- **Internal business logic** consumed by the Cart and Order modules
+- **Public API endpoints** for coupon validation
 
 ---
 
@@ -54,6 +56,8 @@ coupon
 │
 ├── repository.py
 ├── service.py
+├── schemas.py
+├── router.py
 ├── dependencies.py
 ├── exceptions.py
 └── __init__.py
@@ -71,12 +75,25 @@ Repository
 Database
 ```
 
-The Customer application does not directly communicate with this module.
+The Customer application can interact with this module in two ways:
 
-Instead:
+1. **Direct API access** through the Coupon router for validation
+2. **Indirect access** through the Cart module for applying coupons to cart
 
 ```
-Cart Router
+Customer App
+      ↓
+Coupon Router (validation)
+      ↓
+Coupon Service
+      ↓
+Coupon Repository
+```
+
+```
+Customer App
+      ↓
+Cart Router (apply/remove)
       ↓
 Cart Service
       ↓
@@ -289,7 +306,7 @@ RestaurantCouponMismatchException
 
 # Cart Integration
 
-Coupon APIs are exposed through the Cart module.
+Coupon APIs are also exposed through the Cart module for applying coupons directly to the cart.
 
 Available endpoints
 
@@ -309,6 +326,35 @@ Coupon Service
       ↓
 Coupon Repository
 ```
+
+---
+
+# Coupon API Endpoints
+
+## Validate Coupon
+
+```text
+GET /api/v1/coupons/validate
+```
+
+**Authentication**: Required (JWT token)
+
+**Query Parameters**:
+- `coupon_code` (str): The coupon code to validate
+- `restaurant_id` (UUID): Restaurant ID
+- `subtotal` (float): Current cart subtotal
+
+**Response**: CouponDetails or RestaurantCouponDetails
+
+**Error Responses**:
+- 404: Coupon not found
+- 400: Coupon inactive
+- 400: Coupon expired
+- 400: Coupon not yet active
+- 400: Minimum order amount not met
+- 400: Restaurant mismatch (for restaurant-specific coupons)
+
+**Purpose**: Allows frontend to validate coupons before applying them to the cart, providing immediate feedback to customers about coupon validity.
 
 ---
 
@@ -388,17 +434,20 @@ Advantages
 
 ---
 
-## No Coupon Router
+## Coupon Router
 
-There is intentionally no
+The Coupon module now includes a router for direct coupon validation:
 
 ```
 coupon/router.py
 ```
 
-Customer operations occur through Cart.
+This provides:
+- Direct coupon validation endpoint
+- Immediate feedback for frontend applications
+- Separation of validation from cart application
 
-Future Admin modules may introduce
+Future Admin modules may introduce:
 
 ```
 /admin/coupons
